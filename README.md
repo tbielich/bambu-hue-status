@@ -48,8 +48,11 @@ npm start
 
 ## Behavior
 
-- When a print starts, Hue lights are set to red.
-- When a print finishes successfully, Hue lights are set to green.
+- 🟡 When a print starts (`job:start`), Hue lights are set to yellow.
+- 🔵 When the job status is `RUNNING/PRINTING`, Hue lights are set to blue.
+- 🟣 When the job status is `PAUSE/PAUSED/IDLE`, Hue lights are set to purple.
+- 🔴 When the job status is `FAILED`, Hue lights are set to red.
+- 🟢 When a print finishes successfully (`job:finish` with `SUCCESS`), Hue lights are set to green.
 
 ## Notes
 
