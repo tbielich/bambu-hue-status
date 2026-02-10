@@ -17,6 +17,19 @@ async function connectBambu({ host, accessCode, printerSn, onJobStart, onJobFini
     serialNumber: printerSn
   });
 
+  client.on("client:connect", () => {
+    console.log("Bambu client connected.");
+  });
+
+  client.on("client:disconnect", () => {
+    console.log("Bambu client disconnected.");
+  });
+
+  client.on("error", (error) => {
+    const message = error?.message || String(error);
+    console.error("Bambu client error:", message);
+  });
+
   if (typeof onStatus === "function") {
     client.on("printer:statusUpdate", (oldStatus, newStatus) => {
       onStatus({ oldStatus, newStatus });
@@ -35,7 +48,12 @@ async function connectBambu({ host, accessCode, printerSn, onJobStart, onJobFini
     });
   }
 
-  await client.connect();
+  try {
+    await client.connect();
+  } catch (error) {
+    const message = error?.message || String(error);
+    throw new Error(`Failed to connect to Bambu printer: ${message}`);
+  }
 
   return { client };
 }

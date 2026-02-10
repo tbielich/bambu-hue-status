@@ -6,27 +6,22 @@ async function main() {
   const hueConfig = getHueConfig({ requireAppKey: true, requireLightIds: true });
   const bambuConfig = getBambuConfig();
 
-  if (bambuConfig.email || bambuConfig.password || bambuConfig.region) {
-    console.log(
-      "Note: @hiv3d/bambu-node connects locally and does not use BAMBU_EMAIL/BAMBU_PASSWORD/BAMBU_REGION."
-    );
-  }
-
   const hueApi = await createHueApi(hueConfig);
 
   let lastAction = "";
+  let connected = false;
 
   const setRed = async () => {
     if (lastAction === "red") return;
     lastAction = "red";
-    console.log("Print started. Setting Hue lights to red.");
+    console.log("🔴 Print started. Setting Hue lights to red.");
     await setLightsColor(hueApi, hueConfig.lightIds, [255, 0, 0], 100);
   };
 
   const setGreen = async () => {
     if (lastAction === "green") return;
     lastAction = "green";
-    console.log("Print finished successfully. Setting Hue lights to green.");
+    console.log("🟢 Print finished successfully. Setting Hue lights to green.");
     await setLightsColor(hueApi, hueConfig.lightIds, [0, 255, 0], 100);
   };
 
@@ -45,13 +40,17 @@ async function main() {
       }
     },
     onStatus: ({ oldStatus, newStatus }) => {
+      if (!connected) return;
       if (oldStatus !== newStatus) {
-        console.log(`Printer status changed: ${oldStatus} -> ${newStatus}`);
+        console.log(`🟡 Printer status changed: ${oldStatus} -> ${newStatus}`);
       }
     }
   });
 
-  console.log("Listening for Bambu Lab print status updates...");
+  // Mark as connected after the client is up to avoid noisy initial status transitions.
+  connected = true;
+
+  console.log("🟡 Listening for Bambu Lab print status updates...");
 }
 
 main().catch((error) => {
