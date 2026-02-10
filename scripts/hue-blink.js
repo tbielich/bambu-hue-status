@@ -6,10 +6,16 @@ async function sleep(ms) {
 }
 
 async function blink() {
-  const { bridgeIp, appKey, lightIds } = getHueConfig({ requireAppKey: true, requireLightIds: true });
+  const { bridgeIp, appKey, lightIds } = getHueConfig({
+    requireAppKey: true,
+    requireLightIds: true,
+  });
 
   const api = await v3.api.createLocal(bridgeIp).connect(appKey);
-  const stateOn = new v3.lightStates.LightState().on().brightness(100);
+  const stateOn = new v3.lightStates.LightState()
+    .on()
+    .rgb(255, 255, 255)
+    .brightness(100);
   const stateOff = new v3.lightStates.LightState().off();
 
   console.log(`Blinking lights: ${lightIds.join(", ")}`);

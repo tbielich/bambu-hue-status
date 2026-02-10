@@ -1,6 +1,14 @@
 const { BambuClient } = require("@hiv3d/bambu-node");
 
-async function connectBambu({ host, accessCode, printerSn, onJobStart, onJobFinish, onStatus }) {
+async function connectBambu({
+  host,
+  accessCode,
+  printerSn,
+  onJobStart,
+  onJobFinish,
+  onStatus,
+  onJobUpdate
+}) {
   if (!host) {
     throw new Error("BAMBU_HOST is required. This library connects locally to the printer.");
   }
@@ -15,14 +23,6 @@ async function connectBambu({ host, accessCode, printerSn, onJobStart, onJobFini
     host,
     accessToken: accessCode,
     serialNumber: printerSn
-  });
-
-  client.on("client:connect", () => {
-    console.log("Bambu client connected.");
-  });
-
-  client.on("client:disconnect", () => {
-    console.log("Bambu client disconnected.");
   });
 
   client.on("error", (error) => {
@@ -45,6 +45,12 @@ async function connectBambu({ host, accessCode, printerSn, onJobStart, onJobFini
   if (typeof onJobFinish === "function") {
     client.on("job:finish", (job, outcome) => {
       onJobFinish(job, outcome);
+    });
+  }
+
+  if (typeof onJobUpdate === "function") {
+    client.on("job:update", (job) => {
+      onJobUpdate(job);
     });
   }
 

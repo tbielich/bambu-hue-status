@@ -26,10 +26,22 @@ async function setLightsColor(api, lightIds, rgb, brightness = 100) {
 
   for (const id of lightIds) {
     try {
+      const light = await api.lights.getLight(id);
+      const supportsColor =
+        Boolean(light?.capabilities?.control?.colorgamut) ||
+        Boolean(light?.capabilities?.control?.colorgamuttype);
+
+      if (!supportsColor) {
+        console.warn(
+          `Light ${id} (${light?.name || "unknown"}) does not appear to support RGB color.`
+        );
+      }
+
       const result = await api.lights.setLightState(id, state);
-      results.push({ id, result });
+      results.push({ id, result, light: light?.name });
     } catch (error) {
       results.push({ id, error });
+      console.error(`Failed to set light ${id}:`, error.message);
     }
   }
 
