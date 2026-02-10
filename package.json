@@ -1,0 +1,17 @@
+{
+  "name": "bambu-hue-status",
+  "version": "1.0.0",
+  "description": "Control Philips Hue lights based on Bambu Lab A1 Mini print status.",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "hue:pair": "node scripts/hue-pair.js",
+    "hue:list": "node scripts/hue-list.js"
+  },
+  "dependencies": {
+    "@hiv3d/bambu-node": "latest",
+    "dotenv": "^16.4.5",
+    "node-hue-api": "latest"
+  }
+}
