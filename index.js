@@ -45,15 +45,12 @@ async function main() {
   const setGreen = () =>
     setColor("green", "🟢 Print finished successfully. Setting Hue lights to green.", [0, 255, 0]);
 
-  const renderProgress = (percent) => {
+  const logRunningProgress = (percent) => {
     if (!Number.isFinite(percent)) return;
     const clamped = Math.max(0, Math.min(100, Math.round(percent)));
     if (lastPercent === clamped) return;
     lastPercent = clamped;
-    const width = 20;
-    const filled = Math.round((clamped / 100) * width);
-    const bar = `${"█".repeat(filled)}${"░".repeat(width - filled)}`;
-    console.log(`📈 ${bar} ${clamped}%`);
+    console.log(`🔵 Print running. ${clamped}%`);
   };
 
   await connectBambu({
@@ -71,10 +68,10 @@ async function main() {
         job?.percentDone ??
         job?.mc_percent;
       const percentNum = Number(percent);
-      renderProgress(percentNum);
       const status = String(rawStatus).toUpperCase();
       if (status === "RUNNING" || status === "PRINTING") {
         await setBlue();
+        logRunningProgress(percentNum);
       } else if (status === "PAUSE" || status === "PAUSED" || status === "IDLE") {
         await setPurple();
       } else if (status === "FAILED") {

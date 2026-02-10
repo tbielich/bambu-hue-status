@@ -18,7 +18,7 @@ async function blink() {
     .brightness(100);
   const stateOff = new v3.lightStates.LightState().off();
 
-  console.log(`Blinking lights: ${lightIds.join(", ")}`);
+  // console.log(`Blinking lights: ${lightIds.join(", ")}`);
 
   for (const id of lightIds) {
     try {
